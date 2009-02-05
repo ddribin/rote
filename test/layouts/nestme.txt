@@ -1,0 +1,1 @@
+with nested: '<%= @content_for_layout %>'

@@ -1,0 +1,54 @@
+# Built-in Rote rakefile
+#
+# This is effectively a copy of the template rakefile, 
+# but with extra tasks for the command-line wrapper.
+#
+# (c)2005 Ross Bamford (and contributors)
+# 
+begin 
+  require 'rubygems'
+rescue LoadError
+  nil # optional
+end
+require 'rake'
+require 'rake/clean'
+require 'rote'
+
+# Import the standard doc task
+import File.join(File.dirname(__FILE__),('/project/Rakefile'))
+
+#################### CREATE NEW PROJECT FROM TEMPLATE ###############
+#
+# This works in a slightly odd way. The 'create' task simply sets up
+# a rule that catches anything. This rule will then be triggered by
+# the task that follows on the command-line, and taken as the 
+# target directory name.
+# 
+# So instead of 'rote create NAME=foo' we have 'rote create foo'
+#
+# Note that this does preclude having other tasks on the same 
+# invocation (after the create at least) but does also allow
+# multiple projects to be created at once. 
+#
+# Also need a way to display error message if the rule isn't 
+# invoked at least once...
+desc "Bootstrap a new documentation project"
+task :create do
+	rule '' do |t|
+		fail "'#{t.name}' already exists" if File.exists?(t.name)
+	
+		src = 'rote/project'
+	  src_dir = $:.detect { |it| File.exists?(File.join(it,src)) }
+  	fail "Cannot locate project template" unless src_dir
+  
+	  # For now, just copy. Later, maybe we'll do some transformation on the
+  	# sources as they're copied.
+	  cp_r File.join(src_dir, src), t.name
+	end
+end
+
+# DEPRECATED - publish.rf will be unsupported. 			vv0.2.3		v-0.5   1
+import 'publish.rf' if File.exists?('publish.rf')
+
+
+
