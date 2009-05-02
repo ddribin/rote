@@ -358,7 +358,7 @@ module Rote
       # Render the page content into the @content_for_layout
       unless @template_text.nil?
         # default render_fmt does nothing - different page formats may redefine it.
-        erb = ERB.new(@template_text)
+        erb = ERB.new(@template_text, nil, '-')
         erb.filename = template_filename
         @content_for_layout = render_page_filters( erb.result(binding) )
       end
@@ -393,7 +393,7 @@ module Rote
         
         # render into the layout if supplied.
         if txt
-          erb = ERB.new(txt)
+          erb = ERB.new(txt, nil, '-')
           erb.filename = fn
           @content_for_layout = erb.result(binding)   
         end
